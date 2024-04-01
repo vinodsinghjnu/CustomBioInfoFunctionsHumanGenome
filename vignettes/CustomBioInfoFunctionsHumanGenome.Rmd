@@ -1,0 +1,412 @@
+---
+title: "CustomBioInfoFunctionsHumanGenome"
+author: "Vinod Singh"
+date: "`r Sys.Date()`"
+#output: html_document
+#output: rmarkdown::github_document
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=TRUE}
+library(IRanges); library(GenomicRanges); library(CustomBioInfoFunctionsHumanGenome)
+```
+
+## 1. Introduction:
+
+This Package contains some customized functions for common operations used in human genome analysis.
+
+## 2. Availability and Installation
+
+The development version of `CustomBioInfoFunctionsHumanGenome` package is available at <https://github.com/vinodsinghjnu/CustomBioInfoFunctionsHumanGenome> and can be installed as
+
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("vinodsinghjnu/CustomBioInfoFunctionsHumanGenome",build_vignettes = TRUE )
+```
+
+## 3. Functions
+
+### 3.1 addGrInformation
+
+#### **Description**
+
+add assembly information to the genomic range.
+
+#### **Usage**
+
+`addGrInformation(gr.f=gr, assmblyName='hg19')`
+
+#### **Arguments** 
+
+-   `gr.f`: A genomic range.
+-   `assmblyName`: human genome assembly name i.e., hg19 or hg38 or t2t. Default is `hg19`
+
+#### **Details**
+
+This function will add genomic length and assembly name to given genomic ranges (Human genome only). It will remove the non-standard chromosomes from genomic ranges and report the bad genomic ranges for the selected genome assembly.
+
+#### **Value**
+
+returns the input genomic range along with assembly information.
+
+#### **Examples**
+
+```{r echo=TRUE}
+gr <- GRanges(seqnames = "chr1", strand = c("+", "-", "+"),  ranges = IRanges(start = c(1,110,105), end = c(100, 120, 150 )))
+
+outGr=addGrInformation(gr.f=gr, assmblyName='hg19')
+outGr
+```
+
+### 3.2 pctOverlap_Of_FirstGrToSecondGr
+
+#### **Description**
+
+Percent overlap of a GenomicRange with other
+
+#### **Usage**
+
+`pctOverlap_Of_FirstGrToSecondGr(FirstContext=gr1, SecondContext=gr2)`
+
+#### **Arguments**
+
+-   `FirstContext`: GenomicRange object. (query: overlapped)
+-   `SecondContext`: GenomicRange object. (overlapped to)
+
+#### **Details**
+
+Percent overlap of a genomic range with other.
+
+#### **Value**
+
+Percent overlap of first genomic range to second genomic range
+
+#### **Examples**
+
+```{r echo=TRUE}
+gr1 <- GRanges(seqnames = "chr1", strand = c("+", "-", "+"),  ranges = IRanges(start = c(1,110,105), end = c(100, 120, 150 )))
+
+gr2 <- GRanges(seqnames = "chr1", strand = c("+", "-", "+", "+"),  ranges = IRanges(start = c(1,12,60, 105), end = c(25, 50, 70, 115 )))
+
+pctOverlap_Of_FirstGrToSecondGr(FirstContext=gr1, SecondContext=gr2)
+```
+
+### 3.3 emptyChrGranges
+
+#### **Description**
+
+Create empty chromosome GenomicRange object for a given human genome
+assembly
+
+#### **Usage**
+
+`emptyChrGranges(assmblyName='hg19'))`
+
+#### **Arguments**
+
+-   `assmblyName`: hg19 or hg38 or t2t
+
+#### **Details**
+
+Create empty chromosome GenomicRange object for a given human genome
+assembly
+
+#### **Value**
+
+Create empty chromosome GenomicRange object for a given human genome
+assembly
+
+Note: Output object is labelled with assembly information.
+
+#### **Examples**
+
+```{r echo=TRUE}
+hg_19_Chr.gr=emptyChrGranges('hg19')
+head(hg_19_Chr.gr)
+```
+
+### 3.4 getGbins
+
+#### **Description**
+
+Create GenomicRanges object of given the bin size for human genome.
+
+#### **Usage**
+
+`getGbins(assmblyName='hg19', binSize=1000 )`
+
+#### **Arguments**
+
+-   `assmblyName`: hg19 or hg38 0r t2t
+-   `binSize`: size of the genomic block
+-   `chrName`: name of the chromosome, if not given then all chromosomes are considered (UCSC format)
+
+#### **Details**
+
+Create GenomicRanges object of given the bin size for human genome.
+
+#### **Value**
+
+GenomicRanges object of given the bin size
+
+Note: Output object is labelled with assembly information.
+
+#### **Examples**
+
+```{r echo=TRUE}
+hg_19_Bins.gr=getGbins(assmblyName='hg19', binSize=1000 )
+```
+
+```{r echo=TRUE}
+head(hg_19_Bins.gr)
+```
+
+### 3.5 DNASeqsForPattern
+
+#### **Description**
+
+Generate all possible DNA sequences of a [Ambiguous nucleotide
+sequence](https://genomevolution.org/wiki/index.php/Ambiguous_nucleotide)
+
+#### **Usage**
+
+`DNASeqsForPattern(pat='NYYN')`
+
+#### **Arguments**
+
+-   `pat`: a [ambiguous nucleotide
+    sequence](https://genomevolution.org/wiki/index.php/Ambiguous_nucleotide)
+
+#### **Details**
+
+Generate all possible DNA sequences of a [Ambiguous nucleotide
+sequence](https://genomevolution.org/wiki/index.php/Ambiguous_nucleotide)
+
+#### **Value**
+
+A vector of all possible DNA sequences for a given Ambiguous nucleotide
+sequence
+
+#### **Examples**
+
+```{r echo=TRUE}
+DNA_seqs=DNASeqsForPattern(pat='NYYN')
+DNA_seqs
+```
+
+### 3.6 createDir_delIfExists
+
+#### **Description**
+
+create a directory and delete if it already exists
+
+#### **Usage**
+
+`createDir_delIfExists(dir='testDir')`
+
+#### **Arguments**
+
+-   `dir`: Name of the dir to be created
+
+#### **Details**
+
+create a directory and delete if it already exists
+
+#### **Value**
+
+Create a directory of given name. (It will delete the directory if it is
+already existing there)
+
+#### **Examples**
+
+```{r echo=TRUE}
+createDir_delIfExists(dir='testDir')
+```
+
+```{r echo=TRUE}
+dir.exists('testDir')
+```
+
+### 3.7 context_oligonucsCounts
+
+#### **Description**
+
+oligo-nucleotide counts in within a genomic context.
+
+#### **Usage**
+
+`context_oligonucsCounts(contextGr=hg_38_gr, oligoType='trinucs', ignore.strand=FALSE, assmblyName='hg38')`
+
+#### **Arguments**
+
+-   `contextGr`: GenomicRange object of the genomic context within which
+    oligo-nucleotides has to be counted.
+-   `oligoType`: dinucs or trinucs or tetranucs
+-   `ignore.strand`: genomic context strand information should be
+    considered. Default: FALSE
+-   `assmblyName`: human genome assembly name (hg19 or hg38). Default:
+    hg19
+    
+#### **Details**
+
+oligo-nucleotide counts in within a genomic context.
+
+#### **Value**
+
+a vector of oligo-nucleotide counts
+
+#### **Examples**
+
+```{r echo=TRUE}
+data(hg_38_gr)
+
+oligonucs.Counts=context_oligonucsCounts(contextGr=hg_38_gr, oligoType='trinucs', ignore.strand=FALSE, assmblyName='hg38')
+
+oligonucs.Counts
+```
+
+### 3.9 getPromGRange
+
+#### **Description**
+
+Get genomic range of ProteinCodingGenes promoters (upst to -200)
+
+#### **Usage**
+
+`getPromGRange(upst = 500, assmblyName)`  
+
+#### **Arguments**
+
+-   `upst`: Upstream of the promoter. Promoter region will be "upst" to -200 to TSS. DEFAULT value is 500
+-   `assmblyName`: human genome assembly name (hg19 or hg38). Default:
+    hg19
+    
+#### **Value**
+
+genomic ranges for protein coding genes and their promoter for a give assembly.
+
+#### **Examples**
+
+```{r echo=TRUE}
+outGr=getPromGRange(upst=500, assmblyName='hg19')
+
+outGr$proteinCoding.proms
+
+outGr$proteinCoding.genes
+```
+
+### 3.10 Gbin_ByCGcnts
+
+#### **Description**
+
+Create a GenomicRange of genomic blocks of user specified CpG counts. (human genome)
+
+#### **Usage**
+
+`Gbin_ByCGcnts(CGs_perBin=100, assmblyName='hg19' )`
+
+#### **Arguments**
+
+-   `assmblyName`: hg19 or hg38 or t2t
+-   `CGs_perBin`: CpG counts in a genomic block/bin. (even number)
+    oligo-nucleotides has to be counted.
+-   `addSeq`: if sequence of the bin is required (Default: FALSE)
+
+#### **Details**
+
+Creates a GenomicRange of genomic blocks of user specified CpG counts. (human genome)
+
+#### **Value**
+
+GenomicRanges object of bins with user specified CpG counts
+
+#### **Examples**
+
+```{r echo=TRUE}
+hg_19_CpGBins.gr=Gbin_ByCGcnts(CGs_perBin=100, assmblyName='hg19' )
+hg_19_CpGBins.gr
+```
+
+### 3.11 largeVariables
+
+#### **Description**
+
+Memory usage of large variable in workspace
+
+#### **Usage**
+
+`largeVariables(n)`
+
+#### **Arguments**
+
+-   `n`: Number of top memory consuming variables required
+
+#### **Details**
+
+Memory of variable in decreasing order
+
+#### **Value**
+
+DataFrame of top memory variables
+
+#### **Examples**
+
+```{r echo=TRUE}
+largeVariables(n=5)
+```
+
+### 3.12 makeTracks_of_grangesList
+
+#### **Description**
+
+make tracks list from GenomicRange lists.
+
+#### **Usage**
+
+`makeTracks_of_grangesList(grlist, location, assmblyName)`
+
+#### **Arguments**
+
+-   `grlist`: GenomicRange object of the genomic context within which
+    oligo-nucleotides has to be counted.
+-   `location`: location on the chromosome as List. ie., list(chr='chr7',from=26700000, to=26750000) 
+-   `assmblyName`: human genome assembly name (hg19 or hg38). Default:
+    hg19
+
+#### **Details**
+
+Make tracks from genomic ranges objects list
+
+#### **Value**
+
+list of tracks for input list of genomic ranges objects.
+
+#### **Examples**
+
+```{r echo=TRUE}
+# example 1
+data(cpgIslands)
+
+mygrlist=list(gr1=cpgIslands,gr2=cpgIslands)
+loc=list(chr='chr7',from=26700000, to=26750000)
+tracks=makeTracks_of_grangesList(grlist=mygrlist, location=loc, assmblyName='hg19')
+plotTracks(tracks, from = loc$from, to = loc$to)
+```
+![](man/figures/trackplot1.png)
+
+
+```{r echo=TRUE}
+# example 2, only genomic ranges no annotation
+gr1 <- GRanges(seqnames = "chr1", strand = c("+", "-", "+"),  ranges = IRanges(start = c(1,110,105), end = c(100, 120, 150 )))
+
+gr2 <- GRanges(seqnames = "chr1", strand = c("+", "-", "+", "+"),  ranges = IRanges(start = c(1,12,60, 105), end = c(25, 50, 70, 115 )))
+
+plotTracks(makeTracks_of_grangesList(list(gr1=gr1,gr2=gr2), if_plain=TRUE), shape="box")
+```
+![](man/figures//trackplot2.png)
